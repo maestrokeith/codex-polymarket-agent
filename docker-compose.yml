@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: strix
+      POSTGRES_PASSWORD: strix_local_only
+      POSTGRES_DB: strix
+    volumes: ["strix_pg:/var/lib/postgresql/data"]
+  engine:
+    build:
+      context: .
+      dockerfile: Dockerfile.engine
+    environment:
+      STRIX_DATABASE_URL: postgresql+asyncpg://strix:strix_local_only@db:5432/strix
+      STRIX_DEMO_MODE: "false"
+    ports: ["8000:8000"]
+    depends_on: [db]
+volumes:
+  strix_pg: {}
